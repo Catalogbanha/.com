@@ -71,7 +71,7 @@ const ads = [
     address:"بنها، الفلل، الميدان، أمام صيدلية الكورنيش وكافيه Craffel",
     phone:"01028212499",
     extra:"عيادة متخصصة في خدمات طب الأسنان وتجميل الأسنان",
-    image:"https://images.unsplash.com/photo-1606811971618-4486d14f3f99?auto=format&fit=crop&w=2200&q=90",
+    image:"images/1.jpg",
     link:"https://www.facebook.com/Brilliant.Benha"
   },
   {
@@ -81,7 +81,7 @@ const ads = [
     address:"وابور التلج، قسم بنها، بنها، القليوبية",
     phone:"0133276060",
     extra:"مشويات وأكلات شرقية مع خدمة التوصيل",
-    image:"https://images.unsplash.com/photo-1552566626-52f8b828add9?auto=format&fit=crop&w=2200&q=90",
+    image:"images/2.jpg",
     link:"https://www.facebook.com/ElwenshBBQ"
   },
   {
@@ -91,7 +91,7 @@ const ads = [
     address:"القليوبية – بنها – شارع الفار",
     phone:"0133263057",
     extra:"متجر مستحضرات تجميل وعناية، وليس مركز تجميل",
-    image:"https://images.unsplash.com/photo-1596462502278-27bfdc403348?auto=format&fit=crop&w=2200&q=90",
+    image:"images/3.jpg",
     link:"https://www.facebook.com/lamset.gamal.banha"
   },
   {
@@ -101,7 +101,7 @@ const ads = [
     address:"بنها – اتريب – طريق الموقف – أبراج الأمل برج ب",
     phone:"15656",
     extra:"صيدليات وخدمات رعاية صحية وتجميلية، مع فروع وخدمات متعددة",
-    image:"https://elamawypharmacies.com/images/pharmacist_1.png",
+    image:"images/4.png",
     link:"https://www.facebook.com/elamawypharmacies",
     website:"https://elamawypharmacies.com/"
   }
