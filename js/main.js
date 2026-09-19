@@ -167,25 +167,25 @@ function mapHref(item){if(item.maps)return item.maps;if(item.lat&&item.lng)retur
 // ---------- إعلانات الصفحة الرئيسية ----------
 let adIndex=0, adTimer=null, adDuration=5000;
 function renderAds(){
-  const slider=document.getElementById("adSlider");
-  slider.innerHTML=ads.map((ad,i)=>`<article class="ad-slide ${i===0?'active':''}" style="background-image:linear-gradient(90deg,rgba(3,28,20,.82),rgba(3,28,20,.20)),url('${ad.image}')"><div class="ad-content"><span class="ad-number">إعلان ${i+1} من ${ads.length}</span><span class="ad-category">${esc(ad.category)}</span><h1>${esc(ad.name)}</h1><p class="ad-main-info">${esc(ad.info)}</p><div class="ad-facts"><span><i class="fa-solid fa-location-dot"></i> ${esc(ad.address)}</span><span><i class="fa-solid fa-phone"></i> ${esc(ad.phone)}</span><span><i class="fa-solid fa-circle-info"></i> ${esc(ad.extra)}</span></div><a class="btn btn-honey btn-lg rounded-pill" href="${ad.link}" target="_blank" rel="noopener"><i class="fa-brands fa-facebook-f"></i> شاهد النشاط على فيسبوك</a></div></article>`).join("");
-  const dots=document.getElementById("adDots");dots.innerHTML=ads.map((_,i)=>`<button class="ad-dot ${i===0?'active':''}" data-index="${i}" aria-label="الإعلان ${i+1}"></button>`).join("");
+  const slider=document.getElementById("heroSlider");
+  slider.innerHTML=ads.map((ad,i)=>`<article class="hero-slide ${i===0?'active':''}" style="background-image:linear-gradient(90deg,rgba(3,28,20,.82),rgba(3,28,20,.20)),url('${ad.image}')"><div class="hero-content"><span class="hero-number">إعلان ${i+1} من ${ads.length}</span><span class="hero-category">${esc(ad.category)}</span><h1>${esc(ad.name)}</h1><p class="hero-main-info">${esc(ad.info)}</p><div class="hero-facts"><span><i class="fa-solid fa-location-dot"></i> ${esc(ad.address)}</span><span><i class="fa-solid fa-phone"></i> ${esc(ad.phone)}</span><span><i class="fa-solid fa-circle-info"></i> ${esc(ad.extra)}</span></div><a class="btn btn-honey btn-lg rounded-pill" href="${ad.link}" target="_blank" rel="noopener"><i class="fa-brands fa-facebook-f"></i> شاهد النشاط على فيسبوك</a></div></article>`).join("");
+  const dots=document.getElementById("heroDots");dots.innerHTML=ads.map((_,i)=>`<button class="hero-dot ${i===0?'active':''}" data-index="${i}" aria-label="الإعلان ${i+1}"></button>`).join("");
   dots.querySelectorAll("button").forEach(b=>b.addEventListener("click",()=>goAd(Number(b.dataset.index))));
   updateAdProgress();
 }
 function goAd(index){
   adIndex=(index+ads.length)%ads.length;
-  document.querySelectorAll(".ad-slide").forEach((el,i)=>el.classList.toggle("active",i===adIndex));
-  document.querySelectorAll(".ad-dot").forEach((el,i)=>el.classList.toggle("active",i===adIndex));
+  document.querySelectorAll(".hero-slide").forEach((el,i)=>el.classList.toggle("active",i===adIndex));
+  document.querySelectorAll(".hero-dot").forEach((el,i)=>el.classList.toggle("active",i===adIndex));
   updateAdProgress(); restartAdTimer();
 }
-function updateAdProgress(){const bar=document.getElementById("adProgressBar");if(!bar)return;bar.style.animation="none";void bar.offsetWidth;bar.style.animation=`adProgress ${adDuration}ms linear forwards`;}
+function updateAdProgress(){const bar=document.getElementById("heroProgressBar");if(!bar)return;bar.style.animation="none";void bar.offsetWidth;bar.style.animation=`heroProgress ${adDuration}ms linear forwards`;}
 function restartAdTimer(){
   clearTimeout(adTimer);
   adTimer=setTimeout(()=>{
     adIndex=(adIndex+1)%ads.length;
-    document.querySelectorAll(".ad-slide").forEach((el,i)=>el.classList.toggle("active",i===adIndex));
-    document.querySelectorAll(".ad-dot").forEach((el,i)=>el.classList.toggle("active",i===adIndex));
+    document.querySelectorAll(".hero-slide").forEach((el,i)=>el.classList.toggle("active",i===adIndex));
+    document.querySelectorAll(".hero-dot").forEach((el,i)=>el.classList.toggle("active",i===adIndex));
     updateAdProgress();
     restartAdTimer();
   },adDuration);
@@ -349,8 +349,8 @@ function setupGoogleForm(){
 function init(){
   document.getElementById("year").textContent=new Date().getFullYear();
   try { renderAds(); renderCategories(); renderAllBusinesses(); setupGoogleForm(); restartAdTimer(); loadApprovedBusinesses(); } catch(err) { console.error("كتالوج بنها:", err); restartAdTimer(); }
-  document.getElementById("adPrev").onclick=()=>goAd(adIndex-1);
-  document.getElementById("adNext").onclick=()=>goAd(adIndex+1);
+  document.getElementById("heroPrev").onclick=()=>goAd(adIndex-1);
+  document.getElementById("heroNext").onclick=()=>goAd(adIndex+1);
   document.getElementById("catalogSearch").addEventListener("input",renderCatalogItems);
   document.addEventListener("click",(e)=>{
     const btn=e.target.closest(".business-details-btn");
