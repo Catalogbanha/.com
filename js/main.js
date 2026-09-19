@@ -1,32 +1,44 @@
 const rawData = Array.isArray(window.directoryData) ? window.directoryData : (Array.isArray(window.BANHA_DIRECTORY) ? window.BANHA_DIRECTORY : []);
 
-// تحويل سجلات ملف البيانات العربي إلى الشكل الذي تستخدمه واجهة الموقع.
-const data = rawData.map((x, i) => ({
-  id: x.id ?? x["رقم السجل"] ?? i + 1,
-  name: x.name ?? x["اسم النشاط"] ?? "",
-  category: x.category ?? x["الفئة الرئيسية"] ?? "🛍️ المتاجر والخدمات المختلفة",
-  subcategory: x.subcategory ?? x["التصنيف الفرعي"] ?? "",
-  originalType: x.originalType ?? x["نوع النشاط الأصلي"] ?? "",
-  address: x.address ?? x["العنوان"] ?? "",
-  phone: x.phone ?? x["الهاتف"] ?? "",
-  whatsapp: x.whatsapp ?? x["واتساب"] ?? "",
-  facebook: x.facebook ?? x["فيسبوك"] ?? "",
-  instagram: x.instagram ?? x["إنستغرام"] ?? "",
-  website: x.website ?? x["الموقع الإلكتروني"] ?? "",
-  hours: x.hours ?? x["مواعيد العمل"] ?? "",
-  rating: x.rating ?? x["تقييم جوجل"] ?? "",
-  reviews: x.reviews ?? x["عدد مراجعات جوجل"] ?? "",
-  prices: x.prices ?? x["نطاق الأسعار"] ?? "",
-  maps: x.maps ?? x["رابط خرائط جوجل"] ?? "",
-  description: x.description ?? x["الوصف"] ?? "",
-  pricesInfo: x.pricesInfo ?? x["معلومات الأسعار"] ?? "",
-  onlineOnly: x.onlineOnly ?? x["نشاط إلكتروني فقط"] ?? "",
-  verified: x.verified ?? x["موثّق"] ?? "",
-  source: x.source ?? x["المصدر"] ?? "",
-  lat: x.lat ?? x["خط العرض"] ?? "",
-  lng: x.lng ?? x["خط الطول"] ?? "",
-  image: x.image ?? x["الصورة"] ?? ""
-}));
+// ضع هنا رابط Google Apps Script بعد نشره كـ Web App.
+// اتركه فارغًا الآن وسيستمر الموقع بالعمل بقاعدة البيانات المحلية فقط.
+const CATALOG_API_URL = "https://script.google.com/macros/s/AKfycbyrg0h9dm0-MxQfQ6rmikdpfMUWoSM65ri3BlgbWxeEw2BeOPN-zwaD3-rADN_Mtrxe/exec";
+
+function normalizeBusiness(x, i = 0) {
+  return {
+    id: x.id ?? x["رقم السجل"] ?? i + 1,
+    name: x.name ?? x["اسم النشاط"] ?? "",
+    category: x.category ?? x["الفئة الرئيسية"] ?? "🛍️ المتاجر والخدمات المختلفة",
+    subcategory: x.subcategory ?? x["التصنيف الفرعي"] ?? "",
+    originalType: x.originalType ?? x["نوع النشاط الأصلي"] ?? "",
+    address: x.address ?? x["العنوان"] ?? "",
+    phone: x.phone ?? x["الهاتف"] ?? "",
+    whatsapp: x.whatsapp ?? x["واتساب"] ?? "",
+    facebook: x.facebook ?? x["فيسبوك"] ?? "",
+    instagram: x.instagram ?? x["إنستغرام"] ?? "",
+    website: x.website ?? x["الموقع الإلكتروني"] ?? "",
+    hours: x.hours ?? x["مواعيد العمل"] ?? "",
+    rating: x.rating ?? x["تقييم جوجل"] ?? "",
+    reviews: x.reviews ?? x["عدد مراجعات جوجل"] ?? "",
+    prices: x.prices ?? x["نطاق الأسعار"] ?? "",
+    maps: x.maps ?? x["رابط خرائط جوجل"] ?? "",
+    description: x.description ?? x["الوصف"] ?? "",
+    pricesInfo: x.pricesInfo ?? x["معلومات الأسعار"] ?? "",
+    onlineOnly: x.onlineOnly ?? x["نشاط إلكتروني فقط"] ?? "",
+    verified: x.verified ?? x["موثّق"] ?? "",
+    source: x.source ?? x["المصدر"] ?? "",
+    lat: x.lat ?? x["خط العرض"] ?? "",
+    lng: x.lng ?? x["خط الطول"] ?? "",
+    image: x.image ?? x["الصورة"] ?? ""
+  };
+}
+
+// قاعدة البيانات الأساسية المحلية (350 نشاطًا).
+const data = rawData.map((x, i) => normalizeBusiness(x, i));
+
+// الأنشطة التي تمت الموافقة عليها من Google Sheets.
+let approvedData = [];
+let catalogApiLoaded = false;
 
 // التصنيفات الأساسية ثابتة حتى تظهر التصنيفات الخالية من البيانات أيضًا.
 const allCategories = [
@@ -125,13 +137,19 @@ const featuredDirectory = ads.map((ad, i) => ({
 }));
 
 function catalogData(){
-  // نضيف المميزين مرة واحدة فقط، ونبقي البيانات الأصلية كما هي.
-  const names = new Set(data.map(x => String(x.name||"").trim()));
-  const merged = [...data, ...featuredDirectory.filter(x => !names.has(x.name.trim()))];
+  // نضيف الأنشطة المقبولة من Google Sheets دون حذف قاعدة البيانات المحلية.
+  const names = new Set();
+  const merged = [];
+  [...data, ...approvedData, ...featuredDirectory].forEach(item => {
+    const key = String(item.name || "").trim().toLocaleLowerCase("ar");
+    if (!key || names.has(key)) return;
+    names.add(key);
+    merged.push(item);
+  });
   return merged.map(x => {
     const copy = {...x};
     // إذا كان النشاط إلكترونيًا فقط يمكنه الظهور أيضًا في قسم الأعمال من المنزل والأونلاين.
-    if (String(copy.onlineOnly||"").toLowerCase() === "true" || String(copy.onlineOnly||"").trim() === "نعم") {
+    if (String(copy.onlineOnly||"").toLowerCase() === "true" || String(copy.onlineOnly||"").trim() === "نعم" || String(copy.onlineOnly||"").includes("أونلاين") || String(copy.onlineOnly||"").includes("اونلاين") || String(copy.onlineOnly||"").includes("من المنزل")) {
       copy.secondaryCategory = "🏠 أعمال من المنزل والبيع أونلاين";
     }
     return copy;
@@ -270,6 +288,45 @@ function showBusinessById(uid){
   if(item) window.showBusiness(item);
 }
 
+function loadApprovedBusinesses(){
+  if(!CATALOG_API_URL.trim() || catalogApiLoaded) return;
+
+  const callbackName = `__banhaCatalogCallback_${Date.now()}_${Math.floor(Math.random()*100000)}`;
+  const script = document.createElement("script");
+  const separator = CATALOG_API_URL.includes("?") ? "&" : "?";
+  const timeout = setTimeout(()=>{
+    cleanup();
+    console.warn("كتالوج بنها: انتهت مهلة تحميل الأنشطة المقبولة من Google Sheets.");
+  }, 12000);
+
+  function cleanup(){
+    clearTimeout(timeout);
+    try { delete window[callbackName]; } catch(_) { window[callbackName] = undefined; }
+    script.remove();
+  }
+
+  window[callbackName] = payload => {
+    cleanup();
+    if(!payload || payload.ok !== true || !Array.isArray(payload.items)) {
+      console.warn("كتالوج بنها: استجابة Google Apps Script غير صالحة.");
+      return;
+    }
+    approvedData = payload.items.map((item, i)=>normalizeBusiness(item, `submitted-${i+1}`));
+    catalogApiLoaded = true;
+    renderCategories();
+    renderAllBusinesses();
+    if(document.getElementById("catalogModal")?.classList.contains("show") && activeCategory) renderCatalogItems();
+  };
+
+  script.onerror = ()=>{
+    cleanup();
+    console.warn("كتالوج بنها: تعذر الاتصال بخدمة Google Apps Script.");
+  };
+  script.src = CATALOG_API_URL.trim() + separator + "callback=" + encodeURIComponent(callbackName);
+  script.async = true;
+  document.head.appendChild(script);
+}
+
 function setupGoogleForm(){
   const btn=document.getElementById("googleFormButton");
   const hint=document.getElementById("googleFormHint");
@@ -291,7 +348,7 @@ function setupGoogleForm(){
 
 function init(){
   document.getElementById("year").textContent=new Date().getFullYear();
-  try { renderAds(); renderCategories(); renderAllBusinesses(); setupGoogleForm(); restartAdTimer(); } catch(err) { console.error("كتالوج بنها:", err); restartAdTimer(); }
+  try { renderAds(); renderCategories(); renderAllBusinesses(); setupGoogleForm(); restartAdTimer(); loadApprovedBusinesses(); } catch(err) { console.error("كتالوج بنها:", err); restartAdTimer(); }
   document.getElementById("adPrev").onclick=()=>goAd(adIndex-1);
   document.getElementById("adNext").onclick=()=>goAd(adIndex+1);
   document.getElementById("catalogSearch").addEventListener("input",renderCatalogItems);
