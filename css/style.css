@@ -45,3 +45,19 @@
 .add-business-points i{color:#ffc107;margin-left:.3rem}
 #googleFormButton[aria-disabled="true"]{opacity:.85}
 @media(max-width:700px){.add-business-card{flex-direction:column;align-items:flex-start;padding:1.4rem}.add-business-icon{width:64px;height:64px;min-width:64px}.add-business-copy h2{font-size:1.45rem}.add-business-points{display:grid;grid-template-columns:1fr}}
+
+/* شارة بسيطة للأنشطة المضافة حديثًا — الأنشطة تبقى بطاقات عادية داخل تصنيفاتها */
+.new-activity-badge{
+  position:absolute;
+  top:12px;
+  right:12px;
+  z-index:3;
+  background:#0c6845;
+  color:#fff;
+  padding:6px 12px;
+  border-radius:999px;
+  font-size:.78rem;
+  font-weight:800;
+  box-shadow:0 4px 12px rgba(0,0,0,.18);
+}
+.card-photo{position:relative;}

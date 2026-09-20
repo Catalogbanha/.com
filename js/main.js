@@ -29,7 +29,8 @@ function normalizeBusiness(x, i = 0) {
     source: x.source ?? x["المصدر"] ?? "",
     lat: x.lat ?? x["خط العرض"] ?? "",
     lng: x.lng ?? x["خط الطول"] ?? "",
-    image: x.image ?? x["الصورة"] ?? ""
+    image: x.image ?? x["الصورة"] ?? x["الصور"] ?? "",
+    newActivity: x.newActivity ?? false
   };
 }
 
@@ -197,6 +198,8 @@ function completenessScore(item){
 }
 function sortByCompleteness(items){
   return [...items].sort((a,b)=>{
+    const newDiff=Number(Boolean(b.newActivity))-Number(Boolean(a.newActivity));
+    if(newDiff!==0) return newDiff;
     const scoreDiff=completenessScore(b)-completenessScore(a);
     if(scoreDiff!==0) return scoreDiff;
     const ratingDiff=(parseFloat(b.rating)||0)-(parseFloat(a.rating)||0);
@@ -268,7 +271,7 @@ function registerBusiness(item){
 function card(item){
   const uid=registerBusiness(item);
   const name=cleanName(item.name),phone=phoneHref(item.phone),wa=whatsappHref(item),map=mapHref(item);
-  return `<div class="col-md-6 col-xl-4"><article class="business-card"><div class="card-photo"><img src="${imgFor(item)}" alt="${esc(name)}" loading="lazy"><span>${esc((item.subcategory||item.category||"").replace(/^\S+\s*/,""))}</span></div><div class="card-body"><div class="completeness-badge"><i class="fa-solid fa-circle-check"></i> معلومات مكتملة: ${completenessScore(item)} / 13</div><h3>${esc(name)}</h3>${item.address?`<div class="card-meta"><i class="fa-solid fa-location-dot"></i>${esc(item.address)}</div>`:""}${item.prices?`<div class="card-meta"><i class="fa-solid fa-tags"></i>${esc(item.prices)}</div>`:""}<div class="card-actions"><button type="button" class="btn btn-honey rounded-pill business-details-btn" data-business-id="${uid}">التفاصيل</button>${phone?`<a class="icon-action" href="tel:${phone}"><i class="fa-solid fa-phone"></i></a>`:""}${wa?`<a class="icon-action" href="${wa}" target="_blank" rel="noopener"><i class="fa-brands fa-whatsapp"></i></a>`:""}${map?`<a class="icon-action" href="${esc(map)}" target="_blank" rel="noopener"><i class="fa-solid fa-location-dot"></i></a>`:""}</div></div></article></div>`;
+  return `<div class="col-md-6 col-xl-4"><article class="business-card"><div class="card-photo"><img src="${imgFor(item)}" alt="${esc(name)}" loading="lazy">${item.newActivity?'<b class="new-activity-badge">جديد</b>':''}<span>${esc((item.subcategory||item.category||"").replace(/^\S+\s*/,""))}</span></div><div class="card-body"><div class="completeness-badge"><i class="fa-solid fa-circle-check"></i> معلومات مكتملة: ${completenessScore(item)} / 13</div><h3>${esc(name)}</h3>${item.address?`<div class="card-meta"><i class="fa-solid fa-location-dot"></i>${esc(item.address)}</div>`:""}${item.prices?`<div class="card-meta"><i class="fa-solid fa-tags"></i>${esc(item.prices)}</div>`:""}<div class="card-actions"><button type="button" class="btn btn-honey rounded-pill business-details-btn" data-business-id="${uid}">التفاصيل</button>${phone?`<a class="icon-action" href="tel:${phone}"><i class="fa-solid fa-phone"></i></a>`:""}${wa?`<a class="icon-action" href="${wa}" target="_blank" rel="noopener"><i class="fa-brands fa-whatsapp"></i></a>`:""}${map?`<a class="icon-action" href="${esc(map)}" target="_blank" rel="noopener"><i class="fa-solid fa-location-dot"></i></a>`:""}</div></div></article></div>`;
 }
 
 window.showBusiness=function(item){
