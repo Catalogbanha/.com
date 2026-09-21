@@ -61,3 +61,7 @@
   box-shadow:0 4px 12px rgba(0,0,0,.18);
 }
 .card-photo{position:relative;}
+
+.card-en-name{font-size:.9rem;opacity:.72;margin-top:-.35rem;margin-bottom:.35rem;direction:ltr;text-align:left}
+.detail-en-name{font-size:1rem;opacity:.72;direction:ltr}
+.detail-en-description{opacity:.78;border-top:1px solid rgba(0,0,0,.08);padding-top:.6rem}

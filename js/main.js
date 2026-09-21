@@ -8,8 +8,10 @@ function normalizeBusiness(x, i = 0) {
   return {
     id: x.id ?? x["رقم السجل"] ?? i + 1,
     name: x.name ?? x["اسم النشاط"] ?? "",
+    nameEn: x.nameEn ?? x["اسم النشاط بالإنجليزية"] ?? "",
     category: x.category ?? x["الفئة الرئيسية"] ?? "🛍️ المتاجر والخدمات المختلفة",
     subcategory: x.subcategory ?? x["التصنيف الفرعي"] ?? "",
+    subcategoryEn: x.subcategoryEn ?? x["التصنيف الفرعي بالإنجليزية"] ?? "",
     originalType: x.originalType ?? x["نوع النشاط الأصلي"] ?? "",
     address: x.address ?? x["العنوان"] ?? "",
     phone: x.phone ?? x["الهاتف"] ?? "",
@@ -23,6 +25,7 @@ function normalizeBusiness(x, i = 0) {
     prices: x.prices ?? x["نطاق الأسعار"] ?? "",
     maps: x.maps ?? x["رابط خرائط جوجل"] ?? "",
     description: x.description ?? x["الوصف"] ?? "",
+    descriptionEn: x.descriptionEn ?? x["الوصف بالإنجليزية"] ?? "",
     pricesInfo: x.pricesInfo ?? x["معلومات الأسعار"] ?? "",
     onlineOnly: x.onlineOnly ?? x["نشاط إلكتروني فقط"] ?? "",
     verified: x.verified ?? x["موثّق"] ?? "",
@@ -55,6 +58,7 @@ const allCategories = [
   {name:"📚 مراكز التعليم والدروس", title:"التعليم والدروس", image:"https://images.unsplash.com/photo-1523240795612-9a054b0db644?auto=format&fit=crop&w=1400&q=85"},
   {name:"🦷 عيادات الأسنان", title:"عيادات الأسنان", image:"https://images.unsplash.com/photo-1609840114035-3c981b782dfe?auto=format&fit=crop&w=1400&q=85"},
   {name:"💇 الحلاقين ومراكز العناية", title:"الحلاقين ومراكز العناية", image:"https://images.unsplash.com/photo-1622286342621-4bd786c2447c?auto=format&fit=crop&w=1400&q=85"},
+  {name:"📸 استوديوهات التصوير والتصوير الفوتوغرافي", title:"استوديوهات التصوير والتصوير الفوتوغرافي", image:"https://images.unsplash.com/photo-1516035069371-29a1b244cc32?auto=format&fit=crop&w=1400&q=85"},
   {name:"🛍️ المتاجر والخدمات المختلفة", title:"المتاجر والخدمات المختلفة", image:"https://lirp.cdn-website.com/b0bcf014/dms3rep/multi/opt/Examples-of-Industries-That-Depend-On-Yelp-Reviews-and-Ratings-v2-640w.png"},
   {name:"🛠️ الحرفيون والعمال", title:"الحرفيون والعمال", image:"https://images.unsplash.com/photo-1504148455328-c376907d081c?auto=format&fit=crop&w=1400&q=85"},
   {name:"🏠 أعمال من المنزل والبيع أونلاين", title:"أعمال من المنزل والبيع أونلاين", image:"https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?auto=format&fit=crop&w=1400&q=85"}
@@ -104,7 +108,22 @@ const ads = [
     extra:"صيدليات وخدمات رعاية صحية وتجميلية، مع فروع وخدمات متعددة",
     image:"images/4.png",
     link:"https://www.facebook.com/elamawypharmacies",
-    website:"https://elamawypharmacies.com/"
+    website:"https://elamawypharmacies.com/",
+    linkType:"facebook"
+  },
+  {
+    name:"وليد عادل ستوديو",
+    nameEn:"Waleed Adel Studios",
+    category:"📸 استوديوهات التصوير والتصوير الفوتوغرافي",
+    info:"استوديو تصوير فوتوغرافي · Photography Studio",
+    address:"بنها – مصر",
+    phone:"01282010102",
+    whatsapp:"01282010102",
+    extra:"استوديو متخصص في التصوير الفوتوغرافي وتجهيز جلسات التصوير · Photography studio for professional photo sessions",
+    image:"images/activity-waleed-adel-studios.png",
+    link:"https://vimeo.com/1190700075",
+    website:"https://vimeo.com/1190700075",
+    linkType:"portfolio"
   }
 ];
 
@@ -118,9 +137,9 @@ const featuredDirectory = ads.map((ad, i) => ({
   address: ad.address,
   phone: ad.phone,
   whatsapp: "",
-  facebook: ad.link,
+  facebook: ad.linkType === "facebook" ? ad.link : "",
   instagram: "",
-  website: ad.website || "",
+  website: ad.website || (ad.linkType === "portfolio" ? ad.link : ""),
   hours: "",
   rating: "",
   reviews: "",
@@ -169,7 +188,7 @@ function mapHref(item){if(item.maps)return item.maps;if(item.lat&&item.lng)retur
 let adIndex=0, adTimer=null, adDuration=5000;
 function renderAds(){
   const slider=document.getElementById("heroSlider");
-  slider.innerHTML=ads.map((ad,i)=>`<article class="hero-slide ${i===0?'active':''}" style="background-image:linear-gradient(90deg,rgba(3,28,20,.82),rgba(3,28,20,.20)),url('${ad.image}')"><div class="hero-content"><span class="hero-number">إعلان ${i+1} من ${ads.length}</span><span class="hero-category">${esc(ad.category)}</span><h1>${esc(ad.name)}</h1><p class="hero-main-info">${esc(ad.info)}</p><div class="hero-facts"><span><i class="fa-solid fa-location-dot"></i> ${esc(ad.address)}</span><span><i class="fa-solid fa-phone"></i> ${esc(ad.phone)}</span><span><i class="fa-solid fa-circle-info"></i> ${esc(ad.extra)}</span></div><a class="btn btn-honey btn-lg rounded-pill" href="${ad.link}" target="_blank" rel="noopener"><i class="fa-brands fa-facebook-f"></i> شاهد النشاط على فيسبوك</a></div></article>`).join("");
+  slider.innerHTML=ads.map((ad,i)=>`<article class="hero-slide ${i===0?'active':''}" style="background-image:linear-gradient(90deg,rgba(3,28,20,.82),rgba(3,28,20,.20)),url('${ad.image}')"><div class="hero-content"><span class="hero-number">إعلان ${i+1} من ${ads.length}</span><span class="hero-category">${esc(ad.category)}</span><h1>${esc(ad.name)}</h1><p class="hero-main-info">${esc(ad.info)}</p><div class="hero-facts"><span><i class="fa-solid fa-location-dot"></i> ${esc(ad.address)}</span><span><i class="fa-solid fa-phone"></i> ${esc(ad.phone)}</span><span><i class="fa-solid fa-circle-info"></i> ${esc(ad.extra)}</span></div><a class="btn btn-honey btn-lg rounded-pill" href="${ad.link}" target="_blank" rel="noopener"><i class="${ad.linkType==='portfolio'?'fa-solid fa-play':'fa-brands fa-facebook-f'}"></i> ${ad.linkType==='portfolio'?'شاهد معرض الأعمال · View Portfolio':'شاهد النشاط على فيسبوك'}</a></div></article>`).join("");
   const dots=document.getElementById("heroDots");dots.innerHTML=ads.map((_,i)=>`<button class="hero-dot ${i===0?'active':''}" data-index="${i}" aria-label="الإعلان ${i+1}"></button>`).join("");
   dots.querySelectorAll("button").forEach(b=>b.addEventListener("click",()=>goAd(Number(b.dataset.index))));
   updateAdProgress();
@@ -271,7 +290,7 @@ function registerBusiness(item){
 function card(item){
   const uid=registerBusiness(item);
   const name=cleanName(item.name),phone=phoneHref(item.phone),wa=whatsappHref(item),map=mapHref(item);
-  return `<div class="col-md-6 col-xl-4"><article class="business-card"><div class="card-photo"><img src="${imgFor(item)}" alt="${esc(name)}" loading="lazy">${item.newActivity?'<b class="new-activity-badge">جديد</b>':''}<span>${esc((item.subcategory||item.category||"").replace(/^\S+\s*/,""))}</span></div><div class="card-body"><div class="completeness-badge"><i class="fa-solid fa-circle-check"></i> معلومات مكتملة: ${completenessScore(item)} / 13</div><h3>${esc(name)}</h3>${item.address?`<div class="card-meta"><i class="fa-solid fa-location-dot"></i>${esc(item.address)}</div>`:""}${item.prices?`<div class="card-meta"><i class="fa-solid fa-tags"></i>${esc(item.prices)}</div>`:""}<div class="card-actions"><button type="button" class="btn btn-honey rounded-pill business-details-btn" data-business-id="${uid}">التفاصيل</button>${phone?`<a class="icon-action" href="tel:${phone}"><i class="fa-solid fa-phone"></i></a>`:""}${wa?`<a class="icon-action" href="${wa}" target="_blank" rel="noopener"><i class="fa-brands fa-whatsapp"></i></a>`:""}${map?`<a class="icon-action" href="${esc(map)}" target="_blank" rel="noopener"><i class="fa-solid fa-location-dot"></i></a>`:""}</div></div></article></div>`;
+  return `<div class="col-md-6 col-xl-4"><article class="business-card"><div class="card-photo"><img src="${imgFor(item)}" alt="${esc(name)}" loading="lazy">${item.newActivity?'<b class="new-activity-badge">جديد</b>':''}<span>${esc((item.subcategory||item.category||"").replace(/^\S+\s*/,""))}</span></div><div class="card-body"><div class="completeness-badge"><i class="fa-solid fa-circle-check"></i> معلومات مكتملة: ${completenessScore(item)} / 13</div><h3>${esc(name)}</h3>${item.nameEn?`<div class="card-en-name">${esc(item.nameEn)}</div>`:""}${item.address?`<div class="card-meta"><i class="fa-solid fa-location-dot"></i>${esc(item.address)}</div>`:""}${item.prices?`<div class="card-meta"><i class="fa-solid fa-tags"></i>${esc(item.prices)}</div>`:""}<div class="card-actions"><button type="button" class="btn btn-honey rounded-pill business-details-btn" data-business-id="${uid}">التفاصيل</button>${phone?`<a class="icon-action" href="tel:${phone}"><i class="fa-solid fa-phone"></i></a>`:""}${wa?`<a class="icon-action" href="${wa}" target="_blank" rel="noopener"><i class="fa-brands fa-whatsapp"></i></a>`:""}${map?`<a class="icon-action" href="${esc(map)}" target="_blank" rel="noopener"><i class="fa-solid fa-location-dot"></i></a>`:""}</div></div></article></div>`;
 }
 
 window.showBusiness=function(item){
@@ -280,7 +299,7 @@ window.showBusiness=function(item){
   const title=document.getElementById("catalogModalTitle");
   if(!modalGrid || !title) return;
   title.textContent=cleanName(item.name);
-  modalGrid.innerHTML=`<div class="col-12"><div class="detail-card"><img src="${imgFor(item)}" alt="${esc(cleanName(item.name))}"><div><span class="modal-kicker">${esc(item.category||"")}</span><h2>${esc(cleanName(item.name))}</h2>${item.subcategory?`<p>${esc(item.subcategory)}</p>`:""}${item.address?`<p><i class="fa-solid fa-location-dot"></i> ${esc(item.address)}</p>`:""}${item.phone?`<p><i class="fa-solid fa-phone"></i> ${esc(item.phone)}</p>`:""}${item.whatsapp?`<p><i class="fa-brands fa-whatsapp"></i> ${esc(item.whatsapp)}</p>`:""}${item.hours?`<p><i class="fa-regular fa-clock"></i> ${esc(item.hours)}</p>`:""}${item.prices?`<p><i class="fa-solid fa-tags"></i> ${esc(item.prices)}</p>`:""}${item.pricesInfo?`<p><i class="fa-solid fa-tag"></i> ${esc(item.pricesInfo)}</p>`:""}${item.description?`<p>${esc(item.description)}</p>`:""}<div class="modal-actions">${phone?`<a class="btn btn-honey rounded-pill" href="tel:${phone}">اتصال</a>`:""}${wa?`<a class="btn btn-success rounded-pill" href="${wa}" target="_blank" rel="noopener">واتساب</a>`:""}${map?`<a class="btn btn-outline-honey rounded-pill" href="${esc(map)}" target="_blank" rel="noopener">الخريطة</a>`:""}${item.facebook?`<a class="btn btn-outline-honey rounded-pill" href="${esc(item.facebook)}" target="_blank" rel="noopener">فيسبوك</a>`:""}${item.instagram?`<a class="btn btn-outline-honey rounded-pill" href="${esc(item.instagram)}" target="_blank" rel="noopener">إنستغرام</a>`:""}${item.website?`<a class="btn btn-outline-honey rounded-pill" href="${esc(item.website)}" target="_blank" rel="noopener">الموقع</a>`:""}</div><button type="button" class="btn btn-link mt-3" data-close-business-detail>← العودة إلى القائمة</button></div></div></div>`;
+  modalGrid.innerHTML=`<div class="col-12"><div class="detail-card"><img src="${imgFor(item)}" alt="${esc(cleanName(item.name))}"><div><span class="modal-kicker">${esc(item.category||"")}</span><h2>${esc(cleanName(item.name))}</h2>${item.nameEn?`<p class="detail-en-name">${esc(item.nameEn)}</p>`:""}${item.subcategory?`<p>${esc(item.subcategory)}${item.subcategoryEn?` · ${esc(item.subcategoryEn)}`:""}</p>`:""}${item.address?`<p><i class="fa-solid fa-location-dot"></i> ${esc(item.address)}</p>`:""}${item.phone?`<p><i class="fa-solid fa-phone"></i> ${esc(item.phone)}</p>`:""}${item.whatsapp?`<p><i class="fa-brands fa-whatsapp"></i> ${esc(item.whatsapp)}</p>`:""}${item.hours?`<p><i class="fa-regular fa-clock"></i> ${esc(item.hours)}</p>`:""}${item.prices?`<p><i class="fa-solid fa-tags"></i> ${esc(item.prices)}</p>`:""}${item.pricesInfo?`<p><i class="fa-solid fa-tag"></i> ${esc(item.pricesInfo)}</p>`:""}${item.description?`<p>${esc(item.description)}</p>`:""}${item.descriptionEn?`<p class="detail-en-description" dir="ltr">${esc(item.descriptionEn)}</p>`:""}<div class="modal-actions">${phone?`<a class="btn btn-honey rounded-pill" href="tel:${phone}">اتصال</a>`:""}${wa?`<a class="btn btn-success rounded-pill" href="${wa}" target="_blank" rel="noopener">واتساب</a>`:""}${map?`<a class="btn btn-outline-honey rounded-pill" href="${esc(map)}" target="_blank" rel="noopener">الخريطة</a>`:""}${item.facebook?`<a class="btn btn-outline-honey rounded-pill" href="${esc(item.facebook)}" target="_blank" rel="noopener">فيسبوك</a>`:""}${item.instagram?`<a class="btn btn-outline-honey rounded-pill" href="${esc(item.instagram)}" target="_blank" rel="noopener">إنستغرام</a>`:""}${item.website?`<a class="btn btn-outline-honey rounded-pill" href="${esc(item.website)}" target="_blank" rel="noopener">الموقع</a>`:""}</div><button type="button" class="btn btn-link mt-3" data-close-business-detail>← العودة إلى القائمة</button></div></div></div>`;
   document.getElementById("catalogEmpty")?.classList.add("d-none");
   const modalEl=document.getElementById("catalogModal");
   bootstrap.Modal.getOrCreateInstance(modalEl).show();
