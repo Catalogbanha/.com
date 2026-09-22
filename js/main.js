@@ -48,6 +48,7 @@ let catalogApiLoaded = false;
 const allCategories = [
   {name:"🍔 المطاعم والكافيهات", title:"المطاعم والكافيهات", image:"https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?auto=format&fit=crop&w=1400&q=85"},
   {name:"👗 محلات الملابس والأحذية", title:"الملابس والأحذية", image:"https://images.unsplash.com/photo-1445205170230-053b83016050?auto=format&fit=crop&w=1400&q=85"},
+  {name:"✈️ السياحة والسفر", title:"السياحة والسفر", image:"https://images.unsplash.com/photo-1488646953014-85cb44e25828?auto=format&fit=crop&w=1400&q=85"},
   {name:"📱 محلات الموبايلات والإلكترونيات", title:"الموبايلات والإلكترونيات", image:"https://images.unsplash.com/photo-1468495244123-6c6c332eeece?auto=format&fit=crop&w=1400&q=85"},
   {name:"🚗 السيارات وقطع الغيار والخدمات المتعلقة بها", title:"السيارات وقطع الغيار", image:"https://images.unsplash.com/photo-1487754180451-c456f719a1fc?auto=format&fit=crop&w=1400&q=85"},
   {name:"🏠 الأثاث والأجهزة المنزلية", title:"الأثاث والأجهزة المنزلية", image:"https://images.unsplash.com/photo-1555041469-a586c61ea9bc?auto=format&fit=crop&w=1400&q=85"},
