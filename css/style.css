@@ -65,3 +65,31 @@
 .card-en-name{font-size:.9rem;opacity:.72;margin-top:-.35rem;margin-bottom:.35rem;direction:ltr;text-align:left}
 .detail-en-name{font-size:1rem;opacity:.72;direction:ltr}
 .detail-en-description{opacity:.78;border-top:1px solid rgba(0,0,0,.08);padding-top:.6rem}
+
+/* الأنشطة المميزة والأنشطة المضافة حديثًا في الصفحة الرئيسية */
+.featured-ads-section{background:linear-gradient(180deg,#fffdf4 0%,#f7fbf8 100%);position:relative;overflow:hidden}
+.featured-ads-section:before{content:"";position:absolute;inset:auto -120px -180px auto;width:360px;height:360px;border-radius:50%;background:rgba(255,201,40,.12);pointer-events:none}
+.home-featured-ads{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:22px;position:relative;z-index:1}
+.home-distinguished-card{grid-column:span 2;background:#fff;border:1px solid #e1ece6;border-radius:30px;overflow:hidden;box-shadow:0 18px 45px rgba(0,61,41,.12);display:flex;flex-direction:column;min-width:0;transition:transform .25s ease,box-shadow .25s ease}
+.home-distinguished-card:nth-child(4),.home-distinguished-card:nth-child(5){grid-column:span 3}
+.home-distinguished-card:hover{transform:translateY(-8px);box-shadow:0 26px 55px rgba(0,61,41,.18)}
+.home-distinguished-photo{height:270px;position:relative;overflow:hidden;background:#eaf2ee}
+.home-distinguished-photo:after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(0,0,0,.02) 45%,rgba(0,35,24,.68) 100%);pointer-events:none}
+.home-distinguished-photo img{width:100%;height:100%;object-fit:cover;display:block;transition:transform .45s ease}
+.home-distinguished-card:hover .home-distinguished-photo img{transform:scale(1.045)}
+.home-distinguished-badge,.home-distinguished-category{position:absolute;z-index:2;top:15px;padding:8px 12px;border-radius:999px;font-size:11px;font-weight:900;box-shadow:0 5px 14px rgba(0,0,0,.14)}
+.home-distinguished-badge{right:15px;background:#ffc928;color:#302500}.home-distinguished-category{left:15px;background:rgba(255,255,255,.94);color:#075238;max-width:72%;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.home-distinguished-body{padding:23px 22px 21px;display:flex;flex-direction:column;flex:1}
+.home-distinguished-body h3{font-size:25px;line-height:1.35;font-weight:900;color:#123c2e;margin:0 0 5px}
+.home-distinguished-summary{font-size:14px;line-height:1.9;color:#5e6c65;margin:8px 0 10px;min-height:54px}
+.home-distinguished-info,.home-distinguished-phone{display:flex;gap:8px;align-items:flex-start;font-size:12px;line-height:1.75;color:#53635b;margin-top:5px}.home-distinguished-info i,.home-distinguished-phone i{color:#087247;margin-top:4px;flex:0 0 auto}
+.home-distinguished-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:auto;padding-top:18px}.home-distinguished-actions .btn{font-size:12px;padding:9px 14px}
+.new-activities-heading{position:relative;z-index:1;margin:65px 0 22px;padding-top:12px;border-top:1px solid #dfeae4}.new-activities-heading h3{font-size:clamp(28px,3vw,40px);font-weight:900;color:#123c2e;margin:5px 0 7px}.new-activities-heading p{color:#68756f;margin:0}
+.home-new-activities{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:14px;position:relative;z-index:1}
+.home-new-activity-card{background:#fff;border:1px solid #e4eee9;border-radius:18px;overflow:hidden;box-shadow:0 9px 25px rgba(0,61,41,.08);display:flex;min-width:0;transition:transform .2s ease,box-shadow .2s ease}
+.home-new-activity-card:hover{transform:translateY(-4px);box-shadow:0 16px 32px rgba(0,61,41,.12)}
+.home-new-activity-photo{width:105px;min-width:105px;height:100%;min-height:145px;position:relative;background:#edf4f0;overflow:hidden}.home-new-activity-photo img{width:100%;height:100%;object-fit:cover;display:block}.home-new-activity-photo span{position:absolute;top:8px;right:8px;background:#ffc928;color:#302500;padding:4px 7px;border-radius:999px;font-size:9px;font-weight:900}
+.home-new-activity-body{padding:14px 13px;display:flex;flex-direction:column;min-width:0;flex:1}.home-new-activity-category{font-size:9px;font-weight:900;color:#0a7950;margin-bottom:5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.home-new-activity-body h4{font-size:15px;line-height:1.4;font-weight:900;color:#183d31;margin:0 0 3px}.home-new-activity-en{font-size:9px;color:#7a8780;margin-bottom:5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.home-new-activity-meta{display:flex;gap:5px;font-size:9px;line-height:1.5;color:#6b7771;margin-top:4px}.home-new-activity-meta i{color:#0a7950;margin-top:2px}.home-new-details{font-size:10px;padding:6px 10px;margin-top:auto;align-self:flex-start}
+@media(max-width:1200px){.home-distinguished-card{grid-column:span 3}.home-distinguished-card:nth-child(4),.home-distinguished-card:nth-child(5){grid-column:span 3}.home-new-activities{grid-template-columns:repeat(3,1fr)}}
+@media(max-width:767px){.home-featured-ads{grid-template-columns:1fr 1fr;gap:13px}.home-distinguished-card,.home-distinguished-card:nth-child(4),.home-distinguished-card:nth-child(5){grid-column:span 1}.home-distinguished-photo{height:210px}.home-distinguished-body{padding:16px 14px}.home-distinguished-body h3{font-size:19px}.home-distinguished-summary{font-size:11px;min-height:unset}.home-new-activities{grid-template-columns:1fr 1fr;gap:10px}.home-new-activity-card{display:block}.home-new-activity-photo{width:100%;height:135px;min-height:135px}.home-new-activity-body{padding:11px}.new-activities-heading{margin-top:48px}}
+@media(max-width:480px){.home-featured-ads{grid-template-columns:1fr}.home-distinguished-photo{height:230px}.home-new-activities{grid-template-columns:1fr}.home-new-activity-card{display:flex}.home-new-activity-photo{width:100px;min-width:100px;height:auto;min-height:130px}}

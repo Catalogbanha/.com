@@ -186,6 +186,55 @@ function mapHref(item){if(item.maps)return item.maps;if(item.lat&&item.lng)retur
 
 // ---------- إعلانات الصفحة الرئيسية ----------
 let adIndex=0, adTimer=null, adDuration=5000;
+function renderHomeFeaturedAds(){
+  const box=document.getElementById("homeFeaturedAds");
+  if(box){
+    box.innerHTML=ads.map((ad,i)=>{
+      const isPortfolio=ad.linkType==='portfolio';
+      const summary=ad.extra || ad.info || '';
+      const info=ad.info || '';
+      const phone=ad.phone || '';
+      return `<article class="home-distinguished-card">
+        <div class="home-distinguished-photo">
+          <img src="${esc(ad.image)}" alt="${esc(ad.name)}" loading="lazy">
+          <span class="home-distinguished-badge"><i class="fa-solid fa-star"></i> نشاط مميز</span>
+          <span class="home-distinguished-category">${esc(ad.category||'')}</span>
+        </div>
+        <div class="home-distinguished-body">
+          <h3>${esc(ad.name)}</h3>
+          ${ad.nameEn?`<div class="home-ad-en" dir="ltr">${esc(ad.nameEn)}</div>`:''}
+          <p class="home-distinguished-summary">${esc(summary)}</p>
+          <div class="home-distinguished-info"><i class="fa-solid fa-circle-info"></i><span>${esc(info)}</span></div>
+          ${phone?`<div class="home-distinguished-phone"><i class="fa-solid fa-phone"></i><span>${esc(phone)}</span></div>`:''}
+          <div class="home-distinguished-actions">
+            <a class="btn btn-honey rounded-pill" href="${esc(ad.link)}" target="_blank" rel="noopener"><i class="${isPortfolio?'fa-solid fa-play':'fa-brands fa-facebook-f'}"></i> ${isPortfolio?'معرض الأعمال':'صفحة النشاط'}</a>
+            ${phone?`<a class="btn btn-outline-honey rounded-pill" href="tel:${esc(phone)}"><i class="fa-solid fa-phone"></i> اتصال</a>`:''}
+          </div>
+        </div>
+      </article>`;
+    }).join('');
+  }
+  const newBox=document.getElementById("homeNewActivities");
+  if(!newBox) return;
+  const newItems=sortByCompleteness(catalogData().filter(x=>x.newActivity));
+  newBox.innerHTML=newItems.length ? newItems.map(item=>{
+    const uid=registerBusiness(item);
+    const name=cleanName(item.name), phone=phoneHref(item.phone), img=imgFor(item);
+    const category=String(item.category||'').replace(/^\S+\s*/, '');
+    return `<article class="home-new-activity-card">
+      <div class="home-new-activity-photo"><img src="${esc(img)}" alt="${esc(name)}" loading="lazy"><span>جديد</span></div>
+      <div class="home-new-activity-body">
+        <div class="home-new-activity-category">${esc(category)}</div>
+        <h4>${esc(name)}</h4>
+        ${item.nameEn?`<div class="home-new-activity-en" dir="ltr">${esc(item.nameEn)}</div>`:''}
+        ${item.address?`<div class="home-new-activity-meta"><i class="fa-solid fa-location-dot"></i>${esc(item.address)}</div>`:''}
+        ${phone?`<div class="home-new-activity-meta"><i class="fa-solid fa-phone"></i>${esc(item.phone)}</div>`:''}
+        <button type="button" class="btn btn-sm btn-outline-honey rounded-pill home-new-details" data-business-id="${uid}">التفاصيل</button>
+      </div>
+    </article>`;
+  }).join('') : '<div class="catalog-empty"><p>لا توجد أنشطة جديدة حاليًا.</p></div>';
+}
+
 function renderAds(){
   const slider=document.getElementById("heroSlider");
   slider.innerHTML=ads.map((ad,i)=>`<article class="hero-slide ${i===0?'active':''}" style="background-image:linear-gradient(90deg,rgba(3,28,20,.82),rgba(3,28,20,.20)),url('${ad.image}')"><div class="hero-content"><span class="hero-number">إعلان ${i+1} من ${ads.length}</span><span class="hero-category">${esc(ad.category)}</span><h1>${esc(ad.name)}</h1><p class="hero-main-info">${esc(ad.info)}</p><div class="hero-facts"><span><i class="fa-solid fa-location-dot"></i> ${esc(ad.address)}</span><span><i class="fa-solid fa-phone"></i> ${esc(ad.phone)}</span><span><i class="fa-solid fa-circle-info"></i> ${esc(ad.extra)}</span></div><a class="btn btn-honey btn-lg rounded-pill" href="${ad.link}" target="_blank" rel="noopener"><i class="${ad.linkType==='portfolio'?'fa-solid fa-play':'fa-brands fa-facebook-f'}"></i> ${ad.linkType==='portfolio'?'شاهد معرض الأعمال · View Portfolio':'شاهد النشاط على فيسبوك'}</a></div></article>`).join("");
@@ -370,12 +419,12 @@ function setupGoogleForm(){
 
 function init(){
   document.getElementById("year").textContent=new Date().getFullYear();
-  try { renderAds(); renderCategories(); renderAllBusinesses(); setupGoogleForm(); restartAdTimer(); loadApprovedBusinesses(); } catch(err) { console.error("كتالوج بنها:", err); restartAdTimer(); }
+  try { renderAds(); renderHomeFeaturedAds(); renderCategories(); renderAllBusinesses(); setupGoogleForm(); restartAdTimer(); loadApprovedBusinesses(); } catch(err) { console.error("كتالوج بنها:", err); restartAdTimer(); }
   document.getElementById("heroPrev").onclick=()=>goAd(adIndex-1);
   document.getElementById("heroNext").onclick=()=>goAd(adIndex+1);
   document.getElementById("catalogSearch").addEventListener("input",renderCatalogItems);
   document.addEventListener("click",(e)=>{
-    const btn=e.target.closest(".business-details-btn");
+    const btn=e.target.closest(".business-details-btn, .home-new-details");
     if(btn){ e.preventDefault(); showBusinessById(btn.dataset.businessId); return; }
     const back=e.target.closest("[data-close-business-detail]");
     if(back){
