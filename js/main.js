@@ -186,7 +186,7 @@ function whatsappHref(item){let n=String(item.whatsapp||item.phone||"").replace(
 function mapHref(item){if(item.maps)return item.maps;if(item.lat&&item.lng)return `https://www.google.com/maps?q=${item.lat},${item.lng}`;if(item.address)return "https://www.google.com/maps/search/?api=1&query="+encodeURIComponent(item.address);return "";}
 
 // ---------- إعلانات الصفحة الرئيسية ----------
-let adIndex=0, adTimer=null, adDuration=5000;
+let adIndex=0, adTimer=null, adDuration=5000, adPaused=false;
 function renderHomeFeaturedAds(){
   const box=document.getElementById("homeFeaturedAds");
   if(box){
@@ -249,9 +249,30 @@ function goAd(index){
   document.querySelectorAll(".hero-dot").forEach((el,i)=>el.classList.toggle("active",i===adIndex));
   updateAdProgress(); restartAdTimer();
 }
-function updateAdProgress(){const bar=document.getElementById("heroProgressBar");if(!bar)return;bar.style.animation="none";void bar.offsetWidth;bar.style.animation=`heroProgress ${adDuration}ms linear forwards`;}
+function updateAdProgress(){
+  const bar=document.getElementById("heroProgressBar");
+  if(!bar)return;
+  bar.style.animation="none";
+  void bar.offsetWidth;
+  bar.style.animation=`heroProgress ${adDuration}ms linear forwards`;
+  bar.style.animationPlayState=adPaused ? "paused" : "running";
+}
+function pauseAdTimer(){
+  adPaused=true;
+  clearTimeout(adTimer);
+  adTimer=null;
+  const bar=document.getElementById("heroProgressBar");
+  if(bar) bar.style.animationPlayState="paused";
+}
+function resumeAdTimer(){
+  if(!adPaused) return;
+  adPaused=false;
+  updateAdProgress();
+  restartAdTimer();
+}
 function restartAdTimer(){
   clearTimeout(adTimer);
+  if(adPaused) return;
   adTimer=setTimeout(()=>{
     adIndex=(adIndex+1)%ads.length;
     document.querySelectorAll(".hero-slide").forEach((el,i)=>el.classList.toggle("active",i===adIndex));
@@ -259,6 +280,22 @@ function restartAdTimer(){
     updateAdProgress();
     restartAdTimer();
   },adDuration);
+}
+
+function setupHeroPauseResume(){
+  const slider=document.getElementById("heroSlider");
+  if(!slider) return;
+  slider.addEventListener("click",(event)=>{
+    // النقرة الأولى توقف التبديل، والنقرة التالية على الشريحة نفسها تستأنفه.
+    if(!event.target.closest(".hero-slide")) return;
+    if(adPaused){
+      resumeAdTimer();
+    }else{
+      pauseAdTimer();
+    }
+  });
+  // عند تمرير الصفحة يبدأ التبديل من جديد، سواء كان متوقفًا بالنقر أو لا.
+  window.addEventListener("scroll",()=>resumeAdTimer(),{passive:true});
 }
 
 function completenessScore(item){
@@ -420,7 +457,7 @@ function setupGoogleForm(){
 
 function init(){
   document.getElementById("year").textContent=new Date().getFullYear();
-  try { renderAds(); renderHomeFeaturedAds(); renderCategories(); renderAllBusinesses(); setupGoogleForm(); restartAdTimer(); loadApprovedBusinesses(); } catch(err) { console.error("كتالوج بنها:", err); restartAdTimer(); }
+  try { renderAds(); renderHomeFeaturedAds(); renderCategories(); renderAllBusinesses(); setupGoogleForm(); setupHeroPauseResume(); restartAdTimer(); loadApprovedBusinesses(); } catch(err) { console.error("كتالوج بنها:", err); restartAdTimer(); }
   document.getElementById("heroPrev").onclick=()=>goAd(adIndex-1);
   document.getElementById("heroNext").onclick=()=>goAd(adIndex+1);
   document.getElementById("catalogSearch").addEventListener("input",renderCatalogItems);
